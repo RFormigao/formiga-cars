@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Formiga car's</title>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <header class="header">
+    <h1>  
+      <span data-js="title"></span>  
+      <span data-js="number"></span>  
+    </h1>
+  </header>
+
+ <section class="container">
+    <form action="#" data-js="form-insert-vehicle" >
+        <p>   <label> <b> Imagem do veículo   </b>   </label>  <input data-js="input-field" type="URL" required="required"> </p>
+        <p>   <label> <b> Marca / Modelo   </b> </label>    <input data-js="input-field" type="text" required="required"> </p>
+        <p>   <label> <b> Ano   </b> </label>    <input data-js="input-field" type="text" required="required"> </p>
+        <p>   <label> <b> Placa   </b> </label>    <input data-js="input-field" type="text" required="required"> </p>
+        <p>   <label> <b> Cor </b> </label>  <input data-js="input-field" type="text" required="required"> </p>
+        <button type="submit">Cadastrar</button>
+      </form>
+    
+      <table border="1" data-js="table-vehicles">
+        <thead data-js="table-header" >
+          <tr>
+            <th colspan="5">Lista de veículos</th>
+          </tr>
+          <tr>
+            <th>Imagem</th>
+            <th>Marca / Modelo</th>
+            <th>Ano</th>
+            <th>Placa</th>
+            <th>Cor</th>
+          </tr>
+        </thead>
+        <tbody data-js="table-body">
+        </tbody>
+      </table>
+ </section>
+
+
+  <script src="dom.js"></script>
+  <script src="challenge-30.js"></script>
+</body>
+</html>
