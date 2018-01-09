@@ -16,7 +16,7 @@ form {
   display: flex;
   flex-direction: column;
   border: 1px solid #02BEC4;
-  width: 30%;
+  width: 35%;
   padding: 20px;
   align-items: flex-start;
 }
