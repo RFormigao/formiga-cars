@@ -43,7 +43,7 @@
   DOM.prototype.verifyTypeObject = function verifyTypeObject (type, param) {
     if (type === 'Null')
       return Object.prototype.toString.call( param ) === '[object Undefined]' ||
-              Object.prototype.toString.call( param ) === '[object Null]';
+             Object.prototype.toString.call( param ) === '[object Null]';
 
     return Object.prototype.toString.call( param ) === '[object '+ type +']';
   }
