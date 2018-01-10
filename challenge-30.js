@@ -44,31 +44,36 @@
       },
 
       addVehicle: function addVehicle() {
-        var $tableBody = new DOM('[data-js="table-body"]');     
-        var lineTable  = doc.createElement("tr");
-        var length     = this.get().length;
-        var image      = doc.createElement("img");
-        var td         = '';
-        app().createTd.call(this, lineTable, length, image, td);
-        $tableBody.get()[0].appendChild(lineTable);   
+        var table = app().table();
+
+        this.get().forEach( function (item, index, array) {
+          table.columnTable = doc.createElement("td"); 
+          
+          if ( array[index] === array[0] ) {
+            table.imageTable.setAttribute ( "src", array[0].value );
+            table.columnTable.appendChild(table.imageTable );
+            table.lineTable.appendChild(table.columnTable ); 
+            return; 
+          } 
+          
+          table.columnTable.appendChild( doc.createTextNode( item.value ) );
+          table.lineTable.appendChild(table.columnTable );            
+        });
+       
+        table.bodyTable.get()[0].appendChild( table.lineTable );   
+      },
+
+      table: function table() {
+        return {
+          bodyTable   : new DOM('[data-js="table-body"]'),
+          lineTable   : doc.createElement("tr"),
+          imageTable  : doc.createElement("img"),
+          columnTable : doc.createElement("td")
+        }
       },
       
       clearFields: function clearFields(item) {
         item.value = '';
-      },
-      
-      createTd: function createTd(lineTable, length, image, td) {
-        for (let i = 0; i < length; i++) {
-          td = doc.createElement("td");
-          if ( this.get()[i] === this.get()[0] ) {
-            image.setAttribute ( "src", this.get()[0].value );
-            td.appendChild( image );
-            lineTable.appendChild( td ); 
-          } else {
-            td.appendChild( doc.createTextNode( this.get()[i].value ) );
-            lineTable.appendChild( td );            
-          }
-        }
       }
     }
   }
