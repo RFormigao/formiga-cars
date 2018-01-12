@@ -20,15 +20,17 @@
         <p> <label><b> Imagem do veículo </b></label> <input data-js="input-field" type="URL" required="required" pattern="(https?:\/\/.*\.(?:png|jpg))" > </p>
         <p> <label><b> Marca / Modelo </b></label> <input data-js="input-field" type="text" required="required"> </p>
         <p> <label><b> Ano </b></label> <input data-js="input-field" type="text" required="required"> </p>
-        <p> <label><b> Placa </b></label> <input data-js="input-field" type="text" required="required"> </p>
+        <p> <label><b> Placa </b></label> <input data-js="input-field" type="text" required="required" pattern="\w{3}-\d{4}"  > </p>
         <p> <label><b> Cor </b></label> <input data-js="input-field" type="text" required="required"> </p>
+        <p> <input data-js="input-field" type="hidden" value="Remover veiculo" > </p>
+
         <button type="submit">Cadastrar</button>
       </form>
     
       <table border="1" data-js="table-vehicles">
         <thead data-js="table-header" >
           <tr>
-            <th colspan="5">Lista de veículos</th>
+            <th colspan="6">Lista de veículos</th>
           </tr>
           <tr>
             <th>Imagem</th>
@@ -36,9 +38,13 @@
             <th>Ano</th>
             <th>Placa</th>
             <th>Cor</th>
+            <th>Remover</th>
           </tr>
         </thead>
         <tbody data-js="table-body">
+          <tr id="empty"  data-js="empty-register" >
+            <td colspan="6" data-js="bla" style="text-align:center; padding: 100px; text-transform:uppercase;" > <b>Nenhum veiculo registrado ainda :(</b> </td>
+          </tr>
         </tbody>
       </table>
  </section>
