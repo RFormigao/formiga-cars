@@ -1,4 +1,4 @@
-(function(DOM, doc) {
+(function($, doc) {
 
   'use strict';
   
@@ -11,7 +11,7 @@
       },
 
       initEvents: function initEvents() {
-        var $formVehicle = new DOM('[data-js="form-insert-vehicle"]');
+        var $formVehicle = $('[data-js="form-insert-vehicle"]');
         $formVehicle.on('submit', this.handleFormVehicles);
       },
 
@@ -25,10 +25,8 @@
       getInfoCompany: function getInfoCompany() {
         if (app().isRequestOk.call(this)) {
           var data   =  JSON.parse(this.responseText);
-          var $title = new DOM('[data-js="title"]');
-          var $phone = new DOM('[data-js="number"]');
-          $title.get()[0].textContent = data.name;
-          $phone.get()[0].textContent = data.phone;
+          $('[data-js="title"]').get()[0].textContent = data.name;
+          $('[data-js="number"]').get()[0].textContent = data.phone;
         }
       },
 
@@ -38,7 +36,7 @@
 
       handleFormVehicles: function handleFormVehicles(event) {
         event.preventDefault();   
-        var $formFields = new DOM('[data-js="input-field"]');        
+        var $formFields = $('[data-js="input-field"]');        
         app().addVehicle.call($formFields);
         $formFields.methodArray('forEach', app().clearFields);     
       },
@@ -65,7 +63,7 @@
 
       table: function table() {
         return {
-          bodyTable   : new DOM('[data-js="table-body"]'),
+          bodyTable   : $('[data-js="table-body"]'),
           lineTable   : doc.createElement("tr"),
           imageTable  : doc.createElement("img"),
           columnTable : doc.createElement("td")
