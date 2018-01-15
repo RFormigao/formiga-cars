@@ -3,8 +3,8 @@
   'use strict';
   
   function app() {
-
     return {
+
       init: function init() {
         this.companyInfo();
         this.initEvents();
@@ -17,7 +17,7 @@
 
       companyInfo: function companyInfo() {
         var ajax = new XMLHttpRequest();
-        ajax.open('GET', 'https://raw.githubusercontent.com/RFormigao/curso-javascript-ninja/master/challenge-29/company.json');
+        ajax.open('GET', 'company.json');
         ajax.send();
         ajax.addEventListener('readystatechange',this.getInfoCompany, false);
       },
@@ -36,28 +36,25 @@
 
       handleFormVehicles: function handleFormVehicles(event) {
         event.preventDefault();   
-        var $formFields = $('[data-js="input-field"]');        
+        var $formFields = $('[data-js="input-field"]');   
+        app().removeFirstLine();     
         app().addVehicle.call($formFields);
         $formFields.methodArray('forEach', app().clearFields);     
       },
 
       addVehicle: function addVehicle() {
         var table = app().table();
-
         this.get().forEach( function (item, index, array) {
           table.columnTable = doc.createElement("td"); 
-          
           if ( array[index] === array[0] ) {
             table.imageTable.setAttribute ( "src", array[0].value );
             table.columnTable.appendChild(table.imageTable );
             table.lineTable.appendChild(table.columnTable ); 
             return; 
-          } 
-          
+          }      
           table.columnTable.appendChild( doc.createTextNode( item.value ) );
-          table.lineTable.appendChild(table.columnTable );            
+          table.lineTable.appendChild(table.columnTable );   
         });
-       
         table.bodyTable.get()[0].appendChild( table.lineTable );   
       },
 
@@ -68,11 +65,18 @@
           imageTable  : doc.createElement("img"),
           columnTable : doc.createElement("td")
         }
-      },
-      
+      },    
+
       clearFields: function clearFields(item) {
         item.value = '';
+      }, 
+
+      removeFirstLine: function removeFirstLine() {
+        var lineTable = $('[data-js="empty-register"]');
+        var element = lineTable.get()[0].children[0];
+        lineTable.get()[0].removeChild(element);     
       }
+      
     }
   }
 
