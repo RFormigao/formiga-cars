@@ -3,22 +3,25 @@
   'use strict';
   
   function app() {
-
     return {
+
       init: function init() {
         this.companyInfo();
         this.initEvents();
       },
+
       initEvents: function initEvents() {
         var $formVehicle = $('[data-js="form-insert-vehicle"]');
         $formVehicle.on('submit', this.handleFormVehicles);
       },
+
       companyInfo: function companyInfo() {
         var ajax = new XMLHttpRequest();
-        ajax.open('GET', 'https://raw.githubusercontent.com/RFormigao/curso-javascript-ninja/master/challenge-29/company.json');
+        ajax.open('GET', 'company.json');
         ajax.send();
         ajax.addEventListener('readystatechange',this.getInfoCompany, false);
       },
+
       getInfoCompany: function getInfoCompany() {
         if (app().isRequestOk.call(this)) {
           var data   =  JSON.parse(this.responseText);
@@ -26,9 +29,11 @@
           $('[data-js="number"]').get()[0].textContent = data.phone;
         }
       },
+
       isRequestOk: function isRequestOk() {
         return this.readyState === 4 && this.status === 200;
       },
+
       handleFormVehicles: function handleFormVehicles(event) {
         event.preventDefault();   
         var $formFields = $('[data-js="input-field"]');   
@@ -36,6 +41,7 @@
         app().addVehicle.call($formFields);
         $formFields.methodArray('forEach', app().clearFields);     
       },
+
       addVehicle: function addVehicle() {
         var table = app().table();
         this.get().forEach( function (item, index, array) {
@@ -51,6 +57,7 @@
         });
         table.bodyTable.get()[0].appendChild( table.lineTable );   
       },
+
       table: function table() {
         return {
           bodyTable   : $('[data-js="table-body"]'),
@@ -58,15 +65,18 @@
           imageTable  : doc.createElement("img"),
           columnTable : doc.createElement("td")
         }
-      },      
+      },    
+
       clearFields: function clearFields(item) {
         item.value = '';
       }, 
+
       removeFirstLine: function removeFirstLine() {
         var lineTable = $('[data-js="empty-register"]');
         var element = lineTable.get()[0].children[0];
         lineTable.get()[0].removeChild(element);     
       }
+      
     }
   }
 
