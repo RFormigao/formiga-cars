@@ -21,7 +21,7 @@ A step by step series of examples that tell you have to get a development env ru
 Say what the step will be
 
 ```
-Give the example
+sudo docker run --rm -dti --name formiga-cars -v "$PWD":/var/www/html/ -p 80:80  php:7.0-apache
 ```
 
 And repeat
