@@ -77,12 +77,10 @@
 
       addVehicleTable: function addVehicleTable(vehicle) {
         var $table = app().table();
-        var counter = 1;
-        console.log('bla');
+        var counter =  $table.bodyTable.get()[0].children.length;
         $table.bodyTable.get()[0].insertAdjacentHTML('beforeend', $table.lineTable);
         for (const detailVehicle in vehicle) {
            $table.bodyTable.get()[0].children[counter].innerHTML = $table.bodyTable.get()[0].children[counter].innerHTML + $table.columnTable.replace(/\[Content\]/, vehicle[detailVehicle]) ;
-          //td.innerHTML(  )
         }
       },
 

@@ -17,11 +17,11 @@
 
  <section class="container">
     <form action="#" data-js="form-insert-vehicle" >
-        <p> <label><b> Imagem do veículo </b></label> <input data-js="input-field" type="URL"   > </p>
-        <p> <label><b> Marca / Modelo </b></label> <input data-js="input-field" type="text" > </p>
-        <p> <label><b> Ano </b></label> <input data-js="input-field" type="text" > </p>
-        <p> <label><b> Placa </b></label> <input data-js="input-field" type="text"   > </p>
-        <p> <label><b> Cor </b></label> <input data-js="input-field" type="text" > </p>
+        <p> <label><b> Imagem do veículo </b></label> <input data-js="input-field" type="URL" required="required" pattern="(https?:\/\/.*\.(?:png|jpg))" > </p>
+        <p> <label><b> Marca / Modelo </b></label> <input data-js="input-field" type="text" required="required"> </p>
+        <p> <label><b> Ano </b></label> <input data-js="input-field" type="text" required="required"> </p>
+        <p> <label><b> Placa </b></label> <input data-js="input-field" type="text" required="required" pattern="\w{3}-\d{4}"  > </p>
+        <p> <label><b> Cor </b></label> <input data-js="input-field" type="text" required="required"> </p>
         <button type="submit">Cadastrar</button>
       </form>
     
