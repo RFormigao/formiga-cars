@@ -8,7 +8,7 @@
       init: function init() {
         this.companyInfo();
         this.initEvents();
-        app().getVehicle();
+        this.getVehicle();
       },
 
       initEvents: function initEvents() {
@@ -48,7 +48,6 @@
 
       handleVehicles: function handleVehicles(event) {
         event.preventDefault();   
-        app().removeFirstLine();     
         app().addVehicle();
         app().getVehicle(); 
       },
@@ -65,13 +64,14 @@
         var ajax = new XMLHttpRequest();
         ajax.open('GET', 'http://localhost:3000/car');
         ajax.send();
-        ajax.addEventListener('readystatechange',this.setVehicle, false);
+        ajax.addEventListener('readystatechange',this.setVehicle, false);           
       },
 
       setVehicle: function setVehicle() {
         if (app().isRequestOk.call(this)) {
           var data = JSON.parse(this.responseText);
           data.forEach( app().addVehicleTable );
+          app().removeFirstLine();
         }
       },
 
@@ -80,16 +80,20 @@
         var counter =  $table.bodyTable.get()[0].children.length;
         $table.bodyTable.get()[0].insertAdjacentHTML('beforeend', $table.lineTable);
         for (const detailVehicle in vehicle) {
-           $table.bodyTable.get()[0].children[counter].innerHTML = $table.bodyTable.get()[0].children[counter].innerHTML + $table.columnTable.replace(/\[Content\]/, vehicle[detailVehicle]) ;
+          if ( detailVehicle === 'image' ) {
+            $table.bodyTable.get()[0].children[counter].innerHTML += app().replaceContent($table.imageTable, vehicle[detailVehicle]);  
+          } else {
+            $table.bodyTable.get()[0].children[counter].innerHTML += app().replaceContent($table.columnTable, vehicle[detailVehicle]);
+          }
         }
       },
 
       table: function table() {
         return {
           bodyTable         : $('[data-js="table-body"]'),
-          lineTable         : '<tr></tr>',
-          imageTable        : doc.createElement("img"),
-          columnTable       : '<td> [Content] </td>',
+          lineTable         : '<tr> </tr>',
+          imageTable        : '<td> <img src="[content]"> </td>',
+          columnTable       : '<td> [content] </td>',
           optionRemoveTable : '<td data-js="remove-vehicle" > <a href="#"> Remover veiculo </a> </td>' 
         }
       },
@@ -98,10 +102,17 @@
         item.value = '';
       }, 
 
+      replaceContent: function replaceContent(element, value) {
+        return element.replace(/\[content\]/, value);
+      },
+
       removeFirstLine: function removeFirstLine() {
         var lineTable = $('[data-js="empty-register"]');
         var element = lineTable.get()[0].children[0];
-        element.setAttribute ( "style", "display:none;" );
+        var $table = app().table();
+        var body = $table.bodyTable.get()[0].children;
+        if (body.length !== 1) 
+          element.setAttribute ( "style", "display:none;" );
       }
       
     }
