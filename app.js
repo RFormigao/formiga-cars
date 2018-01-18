@@ -8,11 +8,12 @@
       init: function init() {
         this.companyInfo();
         this.initEvents();
+        app().getVehicle();
       },
 
       initEvents: function initEvents() {
         var $formVehicle = $('[data-js="form-insert-vehicle"]');
-        $formVehicle.on('submit', this.handleFormVehicles);
+        $formVehicle.on('submit', this.handleVehicles);
       },
 
       companyInfo: function companyInfo() {
@@ -24,7 +25,7 @@
 
       getInfoCompany: function getInfoCompany() {
         if (app().isRequestOk.call(this)) {
-          var data   =  JSON.parse(this.responseText);
+          var data = JSON.parse(this.responseText);
           $('[data-js="title"]').get()[0].textContent = data.name;
           $('[data-js="number"]').get()[0].textContent = data.phone;
         }
@@ -34,62 +35,63 @@
         return this.readyState === 4 && this.status === 200;
       },
 
-      handleFormVehicles: function handleFormVehicles(event) {
+      vehicle: function vehicle() {
+        var $vehicle = $('[data-js="input-field"]');   
+        return {
+          image      : $vehicle.get()[0].value,
+          brandModel : $vehicle.get()[1].value,
+          year       : $vehicle.get()[2].value,
+          plate      : $vehicle.get()[3].value,
+          color      : $vehicle.get()[4].value
+        }
+      },
+
+      handleVehicles: function handleVehicles(event) {
         event.preventDefault();   
-        var $formFields = $('[data-js="input-field"]');   
         app().removeFirstLine();     
-        app().addVehicle.call($formFields);
-        app().optionsVehicle();
-        $formFields.methodArray('forEach', app().clearFields);     
+        app().addVehicle();
+        app().getVehicle(); 
       },
 
       addVehicle: function addVehicle() {
-        var table = app().table();
-        this.get().forEach( function (item, index, array) {
-          table.columnTable = doc.createElement("td"); 
-          if ( array[index] === array[0] ) {
-            table.imageTable.setAttribute ( "src", array[0].value );
-            table.columnTable.appendChild(table.imageTable );
-            table.lineTable.appendChild(table.columnTable ); 
-            return; 
-          }      
-          table.columnTable.appendChild( doc.createTextNode( item.value ) );
-          table.lineTable.appendChild(table.columnTable );   
-        });
-        table.bodyTable.get()[0].appendChild( table.lineTable );   
+        var vehicle = this.vehicle();
+        var ajax = new XMLHttpRequest();
+        ajax.open('POST', 'http://localhost:3000/car');
+        ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        ajax.send('image=' + vehicle.image + '&brandModel=' + vehicle.brandModel + '&year=' + vehicle.year + '&plate=' + vehicle.plate + '&color=' + vehicle.color + '');
       },
 
-      removeVehicle: function removeVehicle(event) {
-        event.preventDefault();
-        var tr = this.parentNode;
+      getVehicle: function getVehicle() {
+        var ajax = new XMLHttpRequest();
+        ajax.open('GET', 'http://localhost:3000/car');
+        ajax.send();
+        ajax.addEventListener('readystatechange',this.setVehicle, false);
+      },
+
+      setVehicle: function setVehicle() {
+        if (app().isRequestOk.call(this)) {
+          var data = JSON.parse(this.responseText);
+          data.forEach( app().addVehicleTable );
+        }
+      },
+
+      addVehicleTable: function addVehicleTable(vehicle) {
         var $table = app().table();
-        $table.bodyTable.get()[0].removeChild(tr);
-        
-        if ($table.bodyTable.get()[0].children.length === 1) {
-          var lineTable = $('[data-js="empty-register"]');
-          var element = lineTable.get()[0].children[0];
-          element.setAttribute ( "style", "display:table-cell;text-align:center; padding: 100px; text-transform:uppercase;" );
+        var counter =  $table.bodyTable.get()[0].children.length;
+        $table.bodyTable.get()[0].insertAdjacentHTML('beforeend', $table.lineTable);
+        for (const detailVehicle in vehicle) {
+           $table.bodyTable.get()[0].children[counter].innerHTML = $table.bodyTable.get()[0].children[counter].innerHTML + $table.columnTable.replace(/\[Content\]/, vehicle[detailVehicle]) ;
         }
       },
 
       table: function table() {
         return {
           bodyTable         : $('[data-js="table-body"]'),
-          lineTable         : doc.createElement("tr"),
+          lineTable         : '<tr></tr>',
           imageTable        : doc.createElement("img"),
-          columnTable       : doc.createElement("td"),
+          columnTable       : '<td> [Content] </td>',
           optionRemoveTable : '<td data-js="remove-vehicle" > <a href="#"> Remover veiculo </a> </td>' 
         }
-      },
-      
-      optionsVehicle: function optionsVehicle() {
-        var table = app().table();
-        var lastVehicle = table.bodyTable.element[0].lastChild;
-        lastVehicle.insertAdjacentHTML('beforeend', table.optionRemoveTable);
-        var self = this;
-        var $removeVehicle = $('[data-js="remove-vehicle"]'); 
-        var lastIndex = $removeVehicle.element.length - 1;
-        $removeVehicle.get()[lastIndex].addEventListener('click', self.removeVehicle, false);
       },
 
       clearFields: function clearFields(item) {
