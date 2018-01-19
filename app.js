@@ -8,7 +8,7 @@
       init: function init() {
         this.companyInfo();
         this.initEvents();
-        this.getVehicle();
+        this.getVehicle('all');
       },
 
       initEvents: function initEvents() {
@@ -49,7 +49,7 @@
       handleVehicles: function handleVehicles(event) {
         event.preventDefault();   
         app().addVehicle();
-        app().getVehicle(); 
+        app().getVehicle('any'); 
       },
 
       addVehicle: function addVehicle() {
@@ -58,63 +58,95 @@
         ajax.open('POST', 'http://localhost:3000/car');
         ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         ajax.send('image=' + vehicle.image + '&brandModel=' + vehicle.brandModel + '&year=' + vehicle.year + '&plate=' + vehicle.plate + '&color=' + vehicle.color + '');
+        app().clearFields();
       },
 
-      getVehicle: function getVehicle() {
+      getVehicle: function getVehicle( type ) {
         var ajax = new XMLHttpRequest();
         ajax.open('GET', 'http://localhost:3000/car');
-        ajax.send();
-        ajax.addEventListener('readystatechange',this.setVehicle, false);           
+        ajax.send();        
+        if (type === 'all')
+          return ajax.addEventListener('readystatechange',this.setVehicle, false);           
+        if (type === 'any')
+          return ajax.addEventListener('readystatechange',this.setAnyVehicle, false);           
       },
 
       setVehicle: function setVehicle() {
         if (app().isRequestOk.call(this)) {
           var data = JSON.parse(this.responseText);
           data.forEach( app().addVehicleTable );
-          app().removeFirstLine();
+          app().table().removeFirstLine();
+        }
+      },
+
+      setAnyVehicle: function setAnyVehicle() {
+        if (app().isRequestOk.call(this)) {
+          var data = JSON.parse(this.responseText);
+          app().addVehicleTable(data.pop()); 
+          app().table().removeFirstLine();
         }
       },
 
       addVehicleTable: function addVehicleTable(vehicle) {
-        var $table = app().table();
-        var counter =  $table.bodyTable.get()[0].children.length;
-        $table.bodyTable.get()[0].insertAdjacentHTML('beforeend', $table.lineTable);
-        for (const detailVehicle in vehicle) {
-          if ( detailVehicle === 'image' ) {
-            $table.bodyTable.get()[0].children[counter].innerHTML += app().replaceContent($table.imageTable, vehicle[detailVehicle]);  
-          } else {
-            $table.bodyTable.get()[0].children[counter].innerHTML += app().replaceContent($table.columnTable, vehicle[detailVehicle]);
-          }
-        }
+        var $table = app().table();  
+        $table.createTr();
+        $table.createImage(vehicle.image);
+        $table.createTd(vehicle);
+        $table.createOptionRemove();
       },
 
-      table: function table() {
-        return {
-          bodyTable         : $('[data-js="table-body"]'),
-          lineTable         : '<tr> </tr>',
-          imageTable        : '<td> <img src="[content]"> </td>',
-          columnTable       : '<td> [content] </td>',
-          optionRemoveTable : '<td data-js="remove-vehicle" > <a href="#"> Remover veiculo </a> </td>' 
-        }
-      },
-
-      clearFields: function clearFields(item) {
-        item.value = '';
+      clearFields: function clearFields() {
+        var $vehicle = $('[data-js="input-field"]');   
+        $vehicle.methodArray('forEach', function (item) {
+          item.value = '';
+        });
       }, 
 
       replaceContent: function replaceContent(element, value) {
         return element.replace(/\[content\]/, value);
       },
 
-      removeFirstLine: function removeFirstLine() {
-        var lineTable = $('[data-js="empty-register"]');
-        var element = lineTable.get()[0].children[0];
-        var $table = app().table();
-        var body = $table.bodyTable.get()[0].children;
-        if (body.length !== 1) 
-          element.setAttribute ( "style", "display:none;" );
-      }
-      
+      table: function table() {
+        return {
+          body   : $('[data-js="table-body"]'),
+          empty  : $('[data-js="empty-register"]'), 
+          line   : '<tr> </tr>',
+          image  : '<td> <img src="[content]"> </td>',
+          column : '<td> [content] </td>',
+          remove : '<td data-js="remove-vehicle" > <a href="#"> Remover veiculo </a> </td>',
+          
+          createTr: function createTr() {
+            this.body.get()[0].insertAdjacentHTML('beforeend', this.line);
+          },
+          
+          createImage: function createImage(image) {
+            var counter = this.counterElements() - 1;
+            this.body.get()[0].children[counter].innerHTML += app().replaceContent(this.image, image);    
+          },
+          
+          createTd: function createTd(vehicle) {
+            var counter = this.counterElements() - 1;
+            delete vehicle.image;
+            for (var index in vehicle) {
+               this.body.get()[0].children[counter].innerHTML += app().replaceContent(this.column, vehicle[index]);          
+            }   
+          },
+          
+          createOptionRemove: function createOptionRemove() {
+            var counter = this.counterElements() - 1;
+            this.body.get()[0].children[counter].innerHTML += this.remove;                   
+          }, 
+          
+          counterElements: function counterElements() {
+            return this.body.get()[0].children.length;
+          },
+          
+          removeFirstLine: function removeFirstLine() {
+            if (this.counterElements() !== 1) 
+              this.empty.get()[0].children[0].setAttribute ( "style", "display:none;" );
+          }
+        }
+      }      
     }
   }
 
