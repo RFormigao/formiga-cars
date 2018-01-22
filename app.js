@@ -71,11 +71,16 @@
           return ajax.addEventListener('readystatechange',this.setAnyVehicle, false);           
       },
 
+      removeVehicle: function removeVehicle() {
+        
+      },
+
       setVehicle: function setVehicle() {
         if (app().isRequestOk.call(this)) {
           var data = JSON.parse(this.responseText);
           data.forEach( app().addVehicleTable );
           app().table().removeFirstLine();
+          app().table().getPlateForDelete();      
         }
       },
 
@@ -113,7 +118,7 @@
           line   : '<tr> </tr>',
           image  : '<td> <img src="[content]"> </td>',
           column : '<td> [content] </td>',
-          remove : '<td data-js="remove-vehicle" > <a href="#"> Remover veiculo </a> </td>',
+          remove : '<td> <a data-js="remove-vehicle" href="#"> Remover veiculo </a> </td>',
           
           createTr: function createTr() {
             this.body.get()[0].insertAdjacentHTML('beforeend', this.line);
@@ -144,6 +149,31 @@
           removeFirstLine: function removeFirstLine() {
             if (this.counterElements() !== 1) 
               this.empty.get()[0].children[0].setAttribute ( "style", "display:none;" );
+            else
+              this.empty.get()[0].children[0].setAttribute ( "style", "display:table-cell;text-align:center; padding: 100px; text-transform:uppercase;" );
+          },
+
+          getPlateForDelete: function getPlateForDelete() {
+            $('[data-js="remove-vehicle"]').methodArray('forEach', function (element, index) {
+              element.addEventListener('click', function(event) {
+                event.preventDefault();
+                var $plate = this.parentNode.parentNode.children[3].innerText;
+                var tr = this.parentNode.parentNode;
+                console.log('plate='+$plate, $plate.length);
+                var ajax = new XMLHttpRequest();
+                ajax.open('DELETE', 'http://localhost:3000/car');
+                ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                ajax.send('plate='+$plate);
+                return ajax.addEventListener('readystatechange',function () {
+                  if (app().isRequestOk.call(this)) {
+                    var data = JSON.parse(this.responseText);
+                    console.log(data); 
+                    tr.remove();
+                    app().table().removeFirstLine();
+                  }
+                }, false);           
+              }, false);
+            });
           }
         }
       }      
