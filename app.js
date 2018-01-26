@@ -39,10 +39,10 @@
         var $vehicle = $('[data-js="input-field"]');   
         return {
           image      : $vehicle.get()[0].value,
-          brandModel : $vehicle.get()[1].value,
-          year       : $vehicle.get()[2].value,
-          plate      : $vehicle.get()[3].value,
-          color      : $vehicle.get()[4].value
+          brandModel : $vehicle.get()[1].value.toUpperCase(),
+          year       : $vehicle.get()[2].value.toUpperCase(),
+          plate      : $vehicle.get()[3].value.toUpperCase(),
+          color      : $vehicle.get()[4].value.toUpperCase()
         }
       },
 
@@ -71,28 +71,38 @@
           return ajax.addEventListener('readystatechange',this.setAnyVehicle, false);           
       },
 
+      removeVehicle: function removeVehicle( event ) {
+        event.preventDefault();
+        var vehicle = this.parentNode.parentNode;
+        var ajax = new XMLHttpRequest();        
+        ajax.open('DELETE', 'http://localhost:3000/car');
+        ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        ajax.send('plate='+vehicle.children[3].innerText);
+
+        return ajax.addEventListener('readystatechange', function () {
+          if (app().isRequestOk.call(this)) {            
+            app().table().removeTr(tr);
+            app().table().removeFirstLine();
+          }
+        }, false);                         
+      },
+
       setVehicle: function setVehicle() {
         if (app().isRequestOk.call(this)) {
           var data = JSON.parse(this.responseText);
-          data.forEach( app().addVehicleTable );
+          data.forEach( app().table().addVehicleTable );
           app().table().removeFirstLine();
+          app().table().getPlateForDelete();      
         }
       },
 
       setAnyVehicle: function setAnyVehicle() {
         if (app().isRequestOk.call(this)) {
           var data = JSON.parse(this.responseText);
-          app().addVehicleTable(data.pop()); 
+          app().table().addVehicleTable(data.pop()); 
           app().table().removeFirstLine();
+          app().table().getPlateForDelete();  
         }
-      },
-
-      addVehicleTable: function addVehicleTable(vehicle) {
-        var $table = app().table();  
-        $table.createTr();
-        $table.createImage(vehicle.image);
-        $table.createTd(vehicle);
-        $table.createOptionRemove();
       },
 
       clearFields: function clearFields() {
@@ -107,13 +117,14 @@
       },
 
       table: function table() {
+        
         return {
           body   : $('[data-js="table-body"]'),
           empty  : $('[data-js="empty-register"]'), 
           line   : '<tr> </tr>',
           image  : '<td> <img src="[content]"> </td>',
           column : '<td> [content] </td>',
-          remove : '<td data-js="remove-vehicle" > <a href="#"> Remover veiculo </a> </td>',
+          remove : '<td> <a data-js="remove-vehicle" href="#"> Remover veiculo </a> </td>',
           
           createTr: function createTr() {
             this.body.get()[0].insertAdjacentHTML('beforeend', this.line);
@@ -122,6 +133,13 @@
           createImage: function createImage(image) {
             var counter = this.counterElements() - 1;
             this.body.get()[0].children[counter].innerHTML += app().replaceContent(this.image, image);    
+          },
+
+          addVehicleTable: function addVehicleTable(vehicle) {
+            table().createTr();
+            table().createImage(vehicle.image);
+            table().createTd(vehicle);
+            table().createOptionRemove();
           },
           
           createTd: function createTd(vehicle) {
@@ -144,6 +162,18 @@
           removeFirstLine: function removeFirstLine() {
             if (this.counterElements() !== 1) 
               this.empty.get()[0].children[0].setAttribute ( "style", "display:none;" );
+            else
+              this.empty.get()[0].children[0].setAttribute ( "style", "display:table-cell;text-align:center; padding: 100px; text-transform:uppercase;" );
+          },
+
+          getPlateForDelete: function getPlateForDelete() {
+            $('[data-js="remove-vehicle"]').methodArray('forEach', function (vehicle) {
+              vehicle.addEventListener('click', app().removeVehicle , false);
+            });
+          },
+
+          removeTr: function removeTr(tr) {
+            tr.remove();
           }
         }
       }      
