@@ -1,5 +1,16 @@
 # Formiga Car's
 
+
+```bash 
+sudo docker run --rm -dti --name documentacao -v "$PWD/template":/var/www/html/ -p 3000:80  php:7.0-apache 
+```
+
+
+```php 
+<?php
+class GO_Example_Model_Thing extends GO_Base_Db_ActiveRecord { } ?>
+```
+
 Aplicação desenvolvida para o curso de javascript ninja.
 
 ## Getting Started
