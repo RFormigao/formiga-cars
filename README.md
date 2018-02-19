@@ -7,8 +7,7 @@ sudo docker run --rm -dti --name documentacao -v "$PWD/template":/var/www/html/ 
 
 
 ```php 
-<?php
-class GO_Example_Model_Thing extends GO_Base_Db_ActiveRecord { } ?>
+class GO_Example_Model_Thing extends GO_Base_Db_ActiveRecord { } 
 ```
 
 Aplicação desenvolvida para o curso de javascript ninja.
